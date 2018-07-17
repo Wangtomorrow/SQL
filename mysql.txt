@@ -87,6 +87,20 @@ rename table 表名 to 新表名;
 alter table 表名 rename to 新表名				--修改表名
 alter table 表名 character set 字符集;				--修改表的字符集
 
+
+-- 修改表时指定主键
+ALTER TABLE stu ADD PRIMARY KEY(sid);
+
+-- 修改表时设置主键自增长
+ALTER TABLE stu11 CHANGE sid sid INT AUTO_INCREMENT;
+
+-- 修改表时删除主键自增长
+ALTER TABLE stu11 CHANGE sid sid INT;
+
+-- 删除主键（只是删除主键约束，而不会删除主键列）
+ALTER TABLE stu DROP PRIMARY KEY;
+
+
 auto_increment  自增 --一般修饰int，字段必须是key
 DML
 插入：
