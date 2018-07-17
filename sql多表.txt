@@ -1,0 +1,74 @@
+﻿创建多表，可以描述出表与表之间的关系
+一对多：
+多对多：
+一对一：
+
+ER图描述表与表之间的关系
+  实体用矩形表示
+  属性用椭圆表示
+  关系用菱形表示
+
+一对多：
+一对多的关系中，一方称之为主表或者多表，多方称之为从表或者多表
+为了表示一对多的关系，一般会在多表的一方添加一个字段，字段名称自定义（建议：主表名称_id）
+字段类型一般和主表的主键的类型保持一致，称该字段为外键
+
+*垃圾数据
+  为了保证数据的有效性和完整性，添加约束（外键约束）
+在多表的一方添加外键约束
+	格式:
+	  alter table 多表名称 add foreign key(外键名称) references 一表名称（主键）；
+添加外键约束特点：
+  1.主表中不能添加从表中已经引用的数据
+  2.从表中不能添加主表中不存在的数据
+
+处理一对多：
+  在多表中添加一个外键，名称一般为主表的名称_id，字段类型一般和主表的主键类型一致
+  为了保证数据的有效性和完整性，在多表的外键上添加外键约束
+
+sqlyog添加架构设计器
+
+
+
+多对多：
+一般引入一张中间表，在中间表中存放两张表的主键，一般还会将这两个主键设置成中间表的联合主键，将多对多拆分成两个一对多，中间表是两边的多表
+为了保证数据的有效性和完整性，在中间表上添加两个外键约束
+	alter table 中间表名称 add foreign key（外键名称） references 一表名称（主键）
+
+
+
+多表查询:
+笛卡尔积：多张表无条件的联合查询
+	select a.*,b.* form a,b
+内连接： 
+	格式1：显式的内连接
+		select a.*,b.* from a [inner] join b on ab的连接条件
+	格式2：隐式的内连接
+		select a.*,b.* from a,b where ab的连接条件
+外链接：
+	左外连接：
+		select a.*,b.* from a left [outer] join b on 连接条件；
+		先展示join左边的表的所有数据，根绝条件关联查询join右边的表，符合条件则展示出来，不符合条件以null展示
+
+	右外连接：
+		select a.*,b.* from b right [outer] join a on 连接条件；
+		先展示join右边的表的所有数据，根绝条件关联查询join左边的表，符合条件则展示出来，不符合条件以null展示
+子查询：
+	一个查询依赖于另一个查询。
+	1.先查询A的id
+	select id from User where username='A';
+	2.select * from orders where user_id=3;
+	合并
+	  select * from orders where user_id=(select id from User where username='A');
+
+给表起别名
+	格式：表 [as] 别名
+
+
+
+分页查询：
+分页查询每个数据库的语句是不通用的.
+MYSQL:使用limit的关键字.
+* select * from product limit a,b;  --a:从哪开始,b:查询多少条.
+Oracle:使用SQL语句嵌套.
+SQLServer:使用top的关键字.

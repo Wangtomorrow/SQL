@@ -1,0 +1,170 @@
+﻿SQL分类：
+DDL:数据定义语言.
+    操作对象：数据库和表
+    create,alter,drop...
+
+DML:数据操纵语言
+    操作对象：记录(行)
+    insert,delete,update
+
+DCL:数据控制语言
+    if,grant
+    操作对象：用户 事务 权限
+
+DQL:数据查询语言.
+    Select
+
+
+DDL
+操作数据库：
+创建数据库
+语法:
+* create database 数据库名;
+* create database 数据库名 character set 字符集;
+* create database 数据库名 character set 字符集 collate 校对规则;
+
+查看数据库
+* 查看数据库服务器中的所有的数据库:show databases;
+* 查看某个数据库的定义的信息:show create database 数据库名;
+
+删除数据库
+* drop database 数据库名称;
+
+修改数据库
+* alter database 数据库名 character set 字符集 collate 校对规则;
+
+其他的数据库操作命令
+* 切换数据库：use 数据库名;
+* 查看正在使用的数据库:select database();
+
+
+操作表：
+create table 表名(
+   字段名 类型(长度) 约束,
+   字段名 类型(长度) 约束
+);
+
+Java				MYSQL
+byte				tinyint
+short				smallint
+int				int
+long				bigint
+float				float
+double				double  --double(5,2) 长度为5，小数位占2，最大值999.99
+boolean				tinyint/int
+char/String			char/varchar(char固定长度字符串，varchar可变长度的字符串)
+Date				date,time,datetime,timestamp
+文件类型			BLOB、TEXT   TEXT指的是文本文件  BLOB二进制文件
+* Oracle的文件类型：BLOB  CLOB
+
+约束：
+单表约束：
+    * 主键约束：primary key
+    * 唯一约束：unique
+    * 非空约束：not null
+
+创建一个分类表：
+    分类ID int类型主键 自动增长
+    分类名称 字符串类型 长度20
+
+create table category(
+	cid int primary key auto_increment,
+	cname varchar(20)
+);
+
+***** 注意：建表之前一定先选择数据库.
+查看表
+查看数据库中的所有表：show tables;
+查看表结构：desc 表名;
+删除表
+drop table 表名;
+修改表
+alter table 表名 add 列名 类型(长度) 约束; 			--修改表添加列. 
+alter table 表名 modify 列名 类型(长度) 约束;			--修改表修改列的类型长度及约束.
+alter table 表名 change 旧列名 新列名 类型(长度) 约束;		--修改表修改列名.
+alter table 表名 drop 列名;					--修改表删除列.
+rename table 表名 to 新表名;
+alter table 表名 rename to 新表名				--修改表名
+alter table 表名 character set 字符集;				--修改表的字符集
+
+auto_increment  自增 --一般修饰int，字段必须是key
+DML
+插入：
+语法：
+* insert into 表 (列名1,列名2,列名3..) values  (值1,值2,值3..); -- 向表中插入某些列
+	insert into user values（1,'ddd'）;
+* insert into 表 values (值1,值2,值3..); --向表中插入所有列
+	insert into user (username,id) values ('ddd',4);
+
+注意：
+* 1.列名数与values后面的值的个数相等
+* 2.列的顺序与插入的值得顺序一致
+* 3.列名的类型与插入的值要一致.
+* 4.插入值得时候不能超过最大长度.
+* 5.值如果是字符串或者日期需要加’’.
+
+cmd下插入中文的乱码的解决：
+* 修改mysql.ini文件.
+    * 将[mysql]下面的字符集改为gbk
+    * 重启mysql服务.services.msc
+
+修改：
+语法：
+* update 表名 set 字段名=值,字段名1=值1 [where 条件];
+
+注意：
+* 1.列名的类型与修改的值要一致.
+* 2.修改值得时候不能超过最大长度.
+* 3.值如果是字符串或者日期需要加’’.
+
+删除：
+语法：
+* delete from 表名 [where 条件];
+注意：
+删除表中所有记录使用delete from 表名; 还是用truncate table 表名;
+* 删除方式：delete 一条一条删除. 而truncate 直接将表删除，重新建空表.属于ddl语句。
+* 事务控制DML,而delete属于DML.如果在一个事务中，delete数据，这些数据可以找回.truncate删除的数据找不回来.
+
+
+
+
+DQL：
+语法：
+* select [distinct] [列名,列名] [别名] from 表 [where 条件].
+*select...from 表名 where 条件 group by 字段分组 having 条件 order by 排序字段 ase|desc
+去重 distinct
+where后的条件写法：
+    * > ,<,=,>=,<=,<>
+    * like 使用占位符 _ 和 %  _代表一个字符 %代表任意个字符. 
+        * select * from product where pname like '%新%';
+    * in在某个范围中获得值.
+        * select * from product where pid in (2,5,8);
+    * between 较小值  and  较大值
+
+排序查询:
+1.查询所有的商品，按价格进行排序.(asc-升序,desc-降序)
+select * from table order by price desc；
+2.查询名称有新的商品的信息并且按价格降序排序.
+select * from table where pname like '%新%’order by price desc；
+
+聚合函数：对一列进行计算，返回值是一个、忽略null值
+* sum(列名),avg(),max(),min(),count(*/列)，round(值，保留的小数值)
+
+1.获得所有商品的价格的总和：
+2.获得商品表中价格的平均数：
+3.获得商品表中有多少条记录：
+
+分组：使用group by
+1.根据cno字段分组，分组后统计商品的个数.
+select cno,conut(*) from table group by cno;
+2.根据cno分组，分组统计每组商品的总数量，并且总数量> 200;
+select cno,sum(pnum) from table group by cno having>200;
+
+where/having区别：
+1.where是对分组前的数据进行过滤
+having是对分组后的、。。
+2.where不能用聚合函数，
+having可以
+
+
+ 
